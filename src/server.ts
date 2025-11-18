@@ -1,5 +1,7 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../swagger.json";
 
 const port = 3000;
 const app = express();
@@ -19,6 +21,7 @@ app.get("/movies", async (_, res) => {
 });
 
 app.use(express.json());
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.post("/movies", async (req, res) => {
   const { title, genre_id, language_id, oscar_count, release_date } = req.body;
@@ -104,28 +107,27 @@ app.delete("/movies/:id", async (req, res) => {
 });
 
 app.get("/movies/:genreName", async (req, res) => {
-
-  try{
-  const moviesFilteredByGenderName = await prisma.movie.findMany({
-    include: {
-      genres: true,
-      languages: true
-    },
+  try {
+    const moviesFilteredByGenderName = await prisma.movie.findMany({
+      include: {
+        genres: true,
+        languages: true,
+      },
       where: {
-        genres:{
-          name:{
+        genres: {
+          name: {
             equals: req.params.genreName,
-            mode: "insensitive"
-        }
-      }
-    }
-  })
+            mode: "insensitive",
+          },
+        },
+      },
+    });
 
-  res.status(200).send(moviesFilteredByGenderName)
-  }catch(error){
+    res.status(200).send(moviesFilteredByGenderName);
+  } catch (error) {
     return res.status(500).send({ message: "Falha ao atualizar um filme" });
   }
-})
+});
 
 app.listen(port, () => {
   console.log(`Servidor em execução na porta ${port}`);
