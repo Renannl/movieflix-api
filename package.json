@@ -2,10 +2,11 @@
   "name": "movieflix-api",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "build": "tsc"
   },
   "keywords": [],
